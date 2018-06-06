@@ -18,7 +18,7 @@ public class Main {
             }
         }).map(e -> "map+" + e)
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
+            .observeOn(Schedulers.mainThread())
             .subscribe(new Subscriber<String>() {
             public void onNext(String var) {
 
@@ -35,12 +35,12 @@ public class Main {
             }
         });
 
-        while (true) {
-            try {
-                Thread.sleep(2);
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
+
+        // 模拟消息队列(主线程)
+        try {
+            Schedulers.runLoop();
+        } catch (InterruptedException e) {
+            // ignore
         }
 
     }
