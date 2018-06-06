@@ -6,13 +6,14 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Observable.create(new OnSubscribe<String>() {
-            public void call(Subscriber<? super String> subscriber) {
+        Observable.create(new OnSubscribe<Integer>() {
+            public void call(Subscriber<? super Integer> subscriber) {
                 for (int i = 0; i < 10; ++i) {
-                    subscriber.onNext("string " + i);
+                    subscriber.onNext(i);
                 }
             }
-        }).subscribe(new Subscriber<String>() {
+        }).map(e -> "map+" + e)
+            .subscribe(new Subscriber<String>() {
             public void onNext(String var) {
                 System.out.println(var);
             }

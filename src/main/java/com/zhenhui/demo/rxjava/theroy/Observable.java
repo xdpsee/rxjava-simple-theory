@@ -17,5 +17,28 @@ public class Observable<T> {
         onSubscribe.call(subscriber);
     }
 
+    public <R> Observable<R> map(final Transformer<? super T, ? extends R> transformer) {
+        return create(new OnSubscribe<R>() {
+            public void call(final Subscriber<? super R> subscriber) {
+                Observable.this.subscribe(new Subscriber<T>() {
+                    public void onNext(T var) {
+                        subscriber.onNext(transformer.call(var));
+                    }
+
+                    public void onComplete() {
+                        subscriber.onComplete();
+                    }
+
+                    public void onError(Throwable t) {
+                        subscriber.onError(t);
+                    }
+                });
+            }
+        });
+    }
 
 }
+
+
+
+
