@@ -55,6 +55,47 @@ public class Observable<T> {
             }
         });
     }
+
+    public Observable<T> observeOn(Scheduler scheduler) {
+        return Observable.create(new OnSubscribe<T>() {
+            @Override
+            public void call(Subscriber<? super T> subscriber) {
+                subscriber.onStart();
+                final Scheduler.Worker worker = scheduler.createWorker();
+                Observable.this.onSubscribe.call(new Subscriber<T>() {
+                    @Override
+                    public void onNext(T var) {
+                        worker.schedule(new Action0() {
+                            @Override
+                            public void run() {
+                                subscriber.onNext(var);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        worker.schedule(new Action0() {
+                            @Override
+                            public void run() {
+                                subscriber.onComplete();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        worker.schedule(new Action0() {
+                            @Override
+                            public void run() {
+                                subscriber.onError(t);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
 }
 
 

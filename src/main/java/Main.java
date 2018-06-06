@@ -18,6 +18,7 @@ public class Main {
             }
         }).map(e -> "map+" + e)
             .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
             .subscribe(new Subscriber<String>() {
             public void onNext(String var) {
 
