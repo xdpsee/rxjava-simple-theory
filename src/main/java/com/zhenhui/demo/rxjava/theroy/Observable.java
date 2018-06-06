@@ -1,5 +1,8 @@
 package com.zhenhui.demo.rxjava.theroy;
 
+import com.zhenhui.demo.rxjava.theroy.schedule.Action0;
+import com.zhenhui.demo.rxjava.theroy.schedule.Scheduler;
+
 public class Observable<T> {
 
     final OnSubscribe<T> onSubscribe;
@@ -37,6 +40,21 @@ public class Observable<T> {
         });
     }
 
+    public Observable<T> subscribeOn(Scheduler scheduler) {
+        return Observable.create(new OnSubscribe<T>() {
+            @Override
+            public void call(Subscriber<? super T> subscriber) {
+                subscriber.onStart();
+
+                scheduler.createWorker().schedule(new Action0() {
+                    @Override
+                    public void run() {
+                        Observable.this.onSubscribe.call(subscriber);
+                    }
+                });
+            }
+        });
+    }
 }
 
 
